@@ -4,11 +4,9 @@ from keras.preprocessing.image import ImageDataGenerator
 import keras.backend as K
 batch_size = 128
 train_datagen = ImageDataGenerator(
-        rescale = 1./255,
         zoom_range = 0.1,
         horizontal_flip = True)
-test_datagen = ImageDataGenerator(rescale = 1./255)
-val_datagen = ImageDataGenerator(rescale = 1./255)
+val_datagen = ImageDataGenerator()
 
 train_gen = train_datagen.flow_from_directory('/data2/data1/Train', 
         batch_size = 32, 

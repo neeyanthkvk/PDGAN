@@ -8,11 +8,11 @@ train_datagen = ImageDataGenerator(
         horizontal_flip = True)
 val_datagen = ImageDataGenerator()
 
-train_gen = train_datagen.flow_from_directory('/data2/data1/Train', 
+train_gen = train_datagen.flow_from_directory('/data2/2D/Train', 
         batch_size = 32, 
         class_mode = 'binary')
 
-val_gen = val_datagen.flow_from_directory('/data2/data1/Validation',
+val_gen = val_datagen.flow_from_directory('/data2/2D/Validation',
         batch_size = 32,
         class_mode = 'binary')
 
@@ -54,13 +54,12 @@ model.compile(loss='binary_crossentropy',
 model.summary()
 
 stopper = keras.callbacks.EarlyStopping(monitor='loss', patience=5, verbose = 1)
-board = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True, write_grads=False, write_images=False, embeddings_freq=0, embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None)
 
 model.fit_generator(train_gen, 
         steps_per_epoch = 238500 // batch_size, 
         epochs = 100, 
         validation_data = val_gen,
         validation_steps = 55841 // batch_size,
-        callbacks = [board, stopper])
+        callbacks = [stopper])
 
 model.save_weights('firsttry.h5')

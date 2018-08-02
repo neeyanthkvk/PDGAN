@@ -10,7 +10,7 @@ Many of the images are of different sizes and shapes. Currentely the traditional
 
 ### Unequal Dataset
 
-Unsure how to combat this. Feeding disproportiantely to balance the data. 
+Unsure how to combat this. Feeding disproportiantely to balance the data. **Solved using class_weight argument in fit method** 
 
 ## Files
 [Conv_2D.py](Conv_2D.py) First and Baseline Attempt. Implements Early Stopping & Patience. Accuracy at around 76%.  

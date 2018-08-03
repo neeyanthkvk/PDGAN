@@ -17,6 +17,6 @@ Unsure how to combat this. Feeding disproportiantely to balance the data. **Solv
 Had to set batch size to 1 to ensure GPU wouldn't crash mid-training. More specifics per file.
 
 ## Files
-[Conv_3D.py](Conv_3D.py) First Attempt at using straight Convolutional Layers. 20 minutes per epoch of training. Fine-tuning parameters before reporting results.
+[Conv_3D.py](Conv_3D.py) First Attempt at using straight Convolutional Layers. 424 (oof) minutes per epoch of training. Fine-tuning parameters before reporting results.
 
 [LSTMCNN.py](LSTMCNN.py) Thought experiment... instead of using the z-dimension as a spatial dimension, make it a temporal dimension. Not nessecarily biologically backed (unlike that of a fMRI), but might be useful? Uses 2 dimension convolutions after due to the LSTM reducing dimensions. 

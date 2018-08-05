@@ -13,8 +13,22 @@ from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 
 model = Sequential()
-model.add(ConvLSTM2D(filters=32, kernel_size=(5, 5), padding = 'same', recurrent_activation='relu', return_sequences=True, input_shape = (176, 256, 240, 32))) 
+model.add(Conv3D(filters=32, kernel_size=(7, 7, 7), padding = 'same', input_shape = (176, 256, 240, 1)))
 model.add(keras.layers.LeakyReLU(alpha=0.125))
+model.add(Conv3D(filters=32, kernel_size=(7, 7, 7), padding = 'same'))
+model.add(keras.layers.LeakyReLU(alpha=0.125))
+model.add(MaxPooling3D((4, 4, 4)))
+
+model.add(Conv3D(filters=64, kernel_size=(5, 5, 5), padding = 'same'))
+model.add(keras.layers.LeakyReLU(alpha=0.125))
+model.add(Conv3D(filters=64, kernel_size=(5, 5, 5), padding = 'same'))
+model.add(keras.layers.LeakyReLU(alpha=0.125))
+model.add(MaxPooling3D((2, 2, 2)))
+
+
+model.add(ConvLSTM2D(filters=32, kernel_size=(5, 5), padding = 'same', recurrent_activation='relu', return_sequences=True)) 
+model.add(keras.layers.LeakyReLU(alpha=0.125))
+
 model.add(ConvLSTM2D(filters=64, kernel_size=(5, 5), padding = 'same', recurrent_activation='relu', return_sequences=True)) 
 model.add(keras.layers.LeakyReLU(alpha=0.125))
 model.add(ConvLSTM2D(filters=16, kernel_size=(5, 5), padding = 'same', recurrent_activation='relu', return_sequences=False)) 

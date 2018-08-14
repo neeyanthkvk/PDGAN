@@ -7,23 +7,27 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Conv3D, MaxPooling3D, GlobalMaxPooling3D, GlobalAveragePooling3D
 from keras.layers import Conv2D, MaxPooling2D, GlobalMaxPooling2D, GlobalAveragePooling2D
-from keras.layers import Flatten, Dropout, Dense, Reshape, BatchNormalization
+from keras.layers import Flatten, Dropout, Dense, Reshape, BatchNormalization, Input
 from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 from keras.utils import plot_model
 
-model = Sequential()
-model.add(Conv3D(32, kernel_size=(7, 7, 7), input_shape=(176, 256, 240, 1), padding="same"))
-model.add(LeakyReLU())
-model.add(Conv3D(32, padding="same", kernel_size=(7, 7, 7)))
-model.add(LeakyReLU())
-model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
-model.add(Dropout(0.25))
 
-model.add(Conv3D(128, padding="same", kernel_size=(5, 5, 5)))
-model.add(LeakyReLU())
-model.add(Conv3D(128, padding="same", kernel_size=(5, 5, 5)))
+input_shape = (176, 256, 240, 1)
+
+input_img = Input(shape=input_shape)
+
+encoder = (Conv3D(32, kernel_size=(7, 7, 7), input_shape=(176, 256, 240, 1), padding="same"))(input_img)
+encoder = (LeakyReLU())(encoder)
+encoder = (Conv3D(32, padding="same", kernel_size=(7, 7, 7)))(encoder)
+encoder = (LeakyReLU())(encoder)
+encoder = (MaxPooling3D(pool_size=(2, 2, 2), padding="same"))(encoder)
+encoder = (Dropout(0.25))(encoder)
+
+encoder = (Conv3D(128, padding="same", kernel_size=(5, 5, 5)))(encoder)
+encoder = (LeakyReLU())(encoder)
+encoder = (Conv3D(128, padding="same", kernel_size=(5, 5, 5)))
 model.add(LeakyReLU())
 model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
 model.add(Dropout(0.25))
@@ -57,7 +61,6 @@ model.add(Dropout(0.5))
 model.add(Dense(2, activation='softmax'))
 model.compile(loss=categorical_crossentropy, optimizer='adam', metrics=['accuracy'])
 model.summary()
-plot_model(model, show_shapes=True, show_layer_names=False, rankdir = 'LR', to_file='Conv_3D.png')
 
 # Data Loading
 y = np.zeros((466+148, 2))

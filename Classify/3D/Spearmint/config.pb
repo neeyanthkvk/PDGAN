@@ -4,18 +4,18 @@ name:     "Spearmint"
 variable {
  name: "conv"
  type: INT
- size: 2
- min:  0
- max:  1
+ size: 4
+ min:  1
+ max:  64
 }
 
 
 variable {
   name: "dense"
   type: INT
-  size: 5
-  min:  -5
-  max:  5
+  size: 1
+  min:  4
+  max:  256
 }
 
 variable {

@@ -1,3 +1,5 @@
+# From https://github.com/eriklindernoren/Keras-GAN
+
 from __future__ import print_function, division
 
 from keras.datasets import mnist

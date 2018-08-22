@@ -79,4 +79,3 @@ history = model.fit(x_train, y_train, validation_data = (x_test, y_test), batch_
 import pickle
 pickle.dump(history, open("history.pkl", "wb"))
 model.save_weights("7312018.h5")
-

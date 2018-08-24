@@ -109,5 +109,3 @@ if __name__ == "__main__":
     model.compile(loss = 'binary_crossentropy', optimizer = g_optimizer)
     disc.trainable = True
     disc.compiler(loss = 'binary_crossentropy', optimizer = d_optimizer)
-
-    

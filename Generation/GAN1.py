@@ -134,17 +134,17 @@ def train(b_size, epchs):
             noise = np.random.uniform(-1, 1, size=(b_size, 1000))
             disc.trainable = False
             g_loss = model.train_on_batch(noise, [1] * BATCH_SIZE)
-            d.trainable = True
+            disc.trainable = True
             if index % 10 == 9:
-                g.save_weights('generator', True)
-                d.save_weights('discriminator', True)
+                gen.save_weights('generator', True)
+                disc.save_weights('discriminator', True)
 
 def gen(b_size, epchs):
     gen = generator(True, {'latent_dim': 1000, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
-    g.compile(loss='binary_crossentropy', optimizer="SGD")
-    g.load_weights('generator')
+    gen.compile(loss='binary_crossentropy', optimizer="SGD")
+    gen.load_weights('generator')
     noise = np.random.uniform(-1, 1, (BATCH_SIZE, 100))
-    generated_images = g.predict(noise, verbose=1)
+    generated_images = gen.predict(noise, verbose=1)
     image = combine_images(generated_images)
     image = image*127.5+127.5
     Image.fromarray(image.astype(np.uint8)).save(

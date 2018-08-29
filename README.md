@@ -14,5 +14,5 @@ Hi this is my science fair project for the 2018-2019 Science Fair, and it concer
 
 ### Papers
 * https://arxiv.org/abs/1803.01229
-* https://arxiv.org/pdf/1711.04340.pdf
+* https://arxiv.org/abs/1711.04340
 * https://arxiv.org/abs/1801.05401

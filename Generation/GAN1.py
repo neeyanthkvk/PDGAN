@@ -101,7 +101,13 @@ def get_args():
     return args
 
 def train(b_size, epchs):
-    (x_train, y_train), (x_test, y_test) = (1,1), (1,1)
+    PD = np.load("/data/PD.npy")
+    #Control = np.load("/data/Control.npy")
+    y = [1] * PD.shape[0] # + [0] * Control.shape[0]
+    
+
+    from sklearn.model_selection import train_test_split
+    (x_train, y_train), (x_test, y_test) = train_test_split(PD, y, test_size = 0.33, random_state = 4)
     x_train = (x_train.astype(np.float32) - 127.5)/127.5 #Scales from -1 to 1
     x_train = x_train[:,:,:,:,None]
     x_test = x_test[:,:,:,:,None]

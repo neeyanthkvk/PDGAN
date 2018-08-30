@@ -1,15 +1,15 @@
 import os
-import opencv
+import cv2
 from PIL import Image
 import numpy as np
 import pickle
 import time
 
-PD_DIR = ""
-CONTROL_DIR = ""
-
+PD_DIR = "/data/2D/PD/"
+CONTROL_DIR = "/data/2D/Control/"
+'''
 ar = np.zeros((466, 176, 32, 30, 1))
-
+count = 0
 for i in range(2500):
     os.system("find " + PD_DIR + " -name '"+ str(i) + "_*' > temp.txt")
     os.system("find " + PD_DIR + " -name '"+ str(i) + "_*' | wc -l > len.txt")
@@ -43,7 +43,7 @@ for i in range(2500):
         print(count)
 np.save("/data/PD.npy", ar)
 
-
+'''
 count = 0
 ar2 = np.zeros((148, 176, 32, 30, 1))
 for i in range(675):
@@ -64,6 +64,7 @@ for i in range(675):
     idx = 0
     for line in reader:
         arr = cv2.imread(line[:-1], cv2.IMREAD_GRAYSCALE)
+        arr = cv2.resize(arr, (0,0), fx=0.125, fy=0.125)
         arr = np.expand_dims(arr, axis=-1)
         if fir:
             fir = False
@@ -75,4 +76,5 @@ for i in range(675):
     if(dArr.shape == (176, 32, 30, 1)):
         ar2[count] = dArr
         count += 1
+        print(count)
 np.save("/data/Control.npy", ar2)

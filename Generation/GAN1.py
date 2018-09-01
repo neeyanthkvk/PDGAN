@@ -1,8 +1,9 @@
 #https://github.com/khushhallchandra/keras-3dgan/blob/master/src/models.py
+#https://github.com/jacobgil/keras-dcgan/blob/master/dcgan.py
 from __future__ import print_function, division
 
-from keras.models import Model
-from keras.layers import Input
+from keras.models import Model, Sequential
+from keras.layers import Input, Reshape
 from keras.layers.core import Activation
 from keras.layers.convolutional import Conv3D, Deconv3D
 from keras.layers.advanced_activations import LeakyReLU
@@ -25,36 +26,36 @@ beta       = 0.5
 z_size     = 200
 cube_len   = 64
 obj_ratio  = 0.5
-shap = (176, 256, 240, 1)
+shap = (176, 32, 30, 1)
 
 def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2), 'kernel_size':(4,4,4)}):
     l_dim = params['latent_dim']
     strides = params['strides']
     kernel_size = params['kernel_size']
 
-    inputs = Input(shape=(1,1,1,l_dim))
-
-    group1 = Deconv3D(512, kernel_size, kernel_initializer='glorot_normal', bias_initlizer='zeros')(inputs)
+    inputs = Input(shape=(l_dim,))
+    inputss = Reshape((1, 1, 1, 1000), input_shape=(1000,))(inputs)
+    group1 = Deconv3D(512, kernel_size, kernel_initializer='glorot_normal', bias_initializer='zeros')(inputss)
     group1 = BatchNormalization()(group1, training=phase_train)
     group1 = Activation(activation='relu')(group1)
 
-    group2 = Deconv3D(256, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initlizer='zeros')(group1)
+    group2 = Deconv3D(256, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group1)
     group2 = BatchNormalization()(group2, training=phase_train)
     group2 = Activation(activation='relu')(group2)
 
-    group3 = Deconv3D(128, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initlizer='zeros')(group2)
+    group3 = Deconv3D(128, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
     group3 = BatchNormalization()(group3, training=phase_train)
     group3 = Activation(activation='relu')(group3)
 
-    group4 = Deconv3D(32, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initlizer='zeros')(group3)
+    group4 = Deconv3D(32, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group3)
     group4 = BatchNormalization()(group4, training=phase_train)
     group4 = Activation(activation='relu')(group4)
 
-    group5 = Deconv3D(16, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initlizer='zeros')(group4)
+    group5 = Deconv3D(16, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group4)
     group5 = BatchNormalization()(group5, training=phase_train)
     group5 = Activation(activation='relu')(group5)
 
-    group6 = Deconv3D(1, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initlizer='zeros')(group5)
+    group6 = Deconv3D(1, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group5)
     group6 = BatchNormalization()(group6, training=phase_train)
     group6 = Activation(activation='relu')(group6)
 
@@ -62,31 +63,35 @@ def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2), 'ke
     geners.summary()
     return geners
 
-def discriminator(phase_train = True, params={'shape':64, 'strides':(2,2,2), 'kernel_size':(4,4,4), 'leak_value':0.2}):
-    shape = params['shape256']
+def discriminator(phase_train = True, params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(4,4,4), 'leak_value':0.2}):
+    shape = params['shape']
     strides = params['strides']
     kernel_size = params['kernel_size']
     leak_value = params['leak_value']
 
     inputs = Input(shape=shape)
 
-    group1 = Conv3D(64, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initlizer = 'zeros')(inputs)
+    group1 = Conv3D(64, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initializer = 'zeros')(inputs)
     group1 = BatchNormalization()(group1, training=phase_train)
     group1 = LeakyReLU(leak_value)(group1)
 
-    group2 = Conv3D(128, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initlizer = 'zeros')(group1)
+    group2 = Conv3D(128, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initializer = 'zeros')(group1)
     group2 = BatchNormalization()(group2, training=phase_train)
     group2 = LeakyReLU(leak_value)(group2)
 
-    group3 = Conv3D(256, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initlizer = 'zeros')(group2)
+    group3 = Conv3D(256, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initializer = 'zeros')(group2)
     group3 = BatchNormalization()(group3, training=phase_train)
     group3 = LeakyReLU(leak_value)(group3)
 
-    group4 = Conv3D(256, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initlizer = 'zeros')(group3)
+    group4 = Conv3D(256, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initializer = 'zeros')(group3)
     group4 = BatchNormalization()(group4, training=phase_train)
     group4 = LeakyReLU(leak_value)(group4)
+    
+    group5 = Flatten()(group4)
+    group5 = Dense(64, activation = 'relu')(group5)
+    group5 = Dense(1, activation = 'sigmoid')(group5)
 
-    discrims = Model(inputs, group4)
+    discrims = Model(inputs, group5)
     discrims.summary()
     return discrims
 
@@ -102,23 +107,35 @@ def get_args():
 
 def train(b_size, epchs):
     PD = np.load("/data/PD.npy")
-    #Control = np.load("/data/Control.npy")
-    y = [1] * PD.shape[0] # + [0] * Control.shape[0]
+    Control = np.load("/data/Control.npy")
+    X = np.concatenate((PD, Control), axis=0)
+    y = [1] * PD.shape[0]  + [0] * Control.shape[0]
+    y = np.array(y) 
+
+    (x_train, y_train), (x_test, y_test) = ([], []), ([], [])
     
+    rn = np.random.randint(100, size=614)
+    for i in range(614):
+        if(rn[i] < 70):
+            x_train.append(X[i])
+            y_train.append(y[i])
+        else:
+            x_test.append(X[i])
+            y_test.append(y[i])
+    x_train = np.array(x_train)
+    x_test = np.array(x_test)
+    y_train = np.array(y_train)
+    y_test = np.array(y_test)
 
-    from sklearn.model_selection import train_test_split
-    (x_train, y_train), (x_test, y_test) = train_test_split(PD, y, test_size = 0.33, random_state = 4)
     x_train = (x_train.astype(np.float32) - 127.5)/127.5 #Scales from -1 to 1
-    x_train = x_train[:,:,:,:,None]
-    x_test = x_test[:,:,:,:,None]
 
-    gen = generator(True, {'latent_dim': 1000, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
-    disc = discriminator(params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(5,5,5), 'leak_value':0.25})
+    gen = generator(True, {'latent_dim': 21120, 'strides':(2,2,2), 'kernel_size':(2,2,2)})
+    disc = discriminator(params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(2,2,2), 'leak_value':0.25})
 
-    finModel = Sequential()
-    finModel.add(gen)
+    model = Sequential()
+    model.add(gen)
     disc.trainable = False
-    finModel.add(disc)
+    model.add(disc)
 
     g_optimizer = Adam(lr = g_lr, beta_1 = beta)
     d_optimizer = Adam(lr = d_lr, beta_1 = beta)
@@ -126,15 +143,17 @@ def train(b_size, epchs):
     gen.compile(loss = 'binary_crossentropy', optimizer='SGD')
     model.compile(loss = 'binary_crossentropy', optimizer = g_optimizer)
     disc.trainable = True
-    disc.compiler(loss = 'binary_crossentropy', optimizer = d_optimizer)
+    disc.compile(loss = 'binary_crossentropy', optimizer = d_optimizer)
 
     for epoch in range(epchs):
-        num_steps = int(X_train.shape[0]/b_size)
+        num_steps = int(x_train.shape[0]/b_size)
         for index in range(num_steps):
             noise = np.random.uniform(-1, 1, size=(b_size, 1000))
             image_batch = x_train[index*b_size:(index+1)*b_size]
             gen_img = gen.predict(noise, verbose = 0)
-            X = np.concatenate((image_batch, generated_images))
+            print(image_batch.shape)
+            print(gen_img.shape)
+            X = np.concatenate((image_batch, gen_img))
             y = [1] * b_size + [0] * b_size
             d_l = disc.train_on_batch(X, y)
             noise = np.random.uniform(-1, 1, size=(b_size, 1000))
@@ -159,6 +178,6 @@ def gen(b_size, epchs):
 if __name__ == "__main__":
     args = get_args()
     if args.mode == "train":
-        train(b_size = args.batch_size, epchs = args.epoch)
+        train(b_size = args.batch_size, epchs = args.epochs)
     elif args.mode == "generate":
-        gen(b_size = args.batch_size, epchs = args.epoch)
+        gen(b_size = args.batch_size, epchs = args.epochs)

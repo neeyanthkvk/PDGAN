@@ -28,38 +28,29 @@ cube_len   = 64
 obj_ratio  = 0.5
 shap = (176, 32, 30, 1)
 
-def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2), 'kernel_size':(4,4,4)}):
+def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2)}):
     l_dim = params['latent_dim']
     strides = params['strides']
-    kernel_size = params['kernel_size']
 
     inputs = Input(shape=(l_dim,))
-    inputss = Reshape((1, 1, 1, 1000), input_shape=(1000,))(inputs)
-    group1 = Deconv3D(512, kernel_size, kernel_initializer='glorot_normal', bias_initializer='zeros')(inputss)
+    inputss = Reshape((22, 8, 15, 1), input_shape=(l_dim,))(inputs)
+    group1 = Deconv3D(512, (2,2,2), kernel_initializer='glorot_normal', bias_initializer='zeros')(inputss)
     group1 = BatchNormalization()(group1, training=phase_train)
     group1 = Activation(activation='relu')(group1)
 
-    group2 = Deconv3D(256, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group1)
+    group2 = Deconv3D(64, (2,2,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group1)
     group2 = BatchNormalization()(group2, training=phase_train)
     group2 = Activation(activation='relu')(group2)
 
-    group3 = Deconv3D(128, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
+    group3 = Deconv3D(8, (2,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
     group3 = BatchNormalization()(group3, training=phase_train)
     group3 = Activation(activation='relu')(group3)
 
-    group4 = Deconv3D(32, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group3)
+    group4 = Deconv3D(1, (1,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group3)
     group4 = BatchNormalization()(group4, training=phase_train)
     group4 = Activation(activation='relu')(group4)
 
-    group5 = Deconv3D(16, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group4)
-    group5 = BatchNormalization()(group5, training=phase_train)
-    group5 = Activation(activation='relu')(group5)
-
-    group6 = Deconv3D(1, kernel_size, strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group5)
-    group6 = BatchNormalization()(group6, training=phase_train)
-    group6 = Activation(activation='relu')(group6)
-
-    geners = Model(inputs, group6)
+    geners = Model(inputs, group4)
     geners.summary()
     return geners
 
@@ -86,7 +77,7 @@ def discriminator(phase_train = True, params={'shape':shap, 'strides':(2,2,2), '
     group4 = Conv3D(256, kernel_size = kernel_size, strides = strides, kernel_initializer = 'glorot_normal', bias_initializer = 'zeros')(group3)
     group4 = BatchNormalization()(group4, training=phase_train)
     group4 = LeakyReLU(leak_value)(group4)
-    
+
     group5 = Flatten()(group4)
     group5 = Dense(64, activation = 'relu')(group5)
     group5 = Dense(1, activation = 'sigmoid')(group5)
@@ -110,10 +101,10 @@ def train(b_size, epchs):
     Control = np.load("/data/Control.npy")
     X = np.concatenate((PD, Control), axis=0)
     y = [1] * PD.shape[0]  + [0] * Control.shape[0]
-    y = np.array(y) 
+    y = np.array(y)
 
     (x_train, y_train), (x_test, y_test) = ([], []), ([], [])
-    
+
     rn = np.random.randint(100, size=614)
     for i in range(614):
         if(rn[i] < 70):
@@ -129,7 +120,7 @@ def train(b_size, epchs):
 
     x_train = (x_train.astype(np.float32) - 127.5)/127.5 #Scales from -1 to 1
 
-    gen = generator(True, {'latent_dim': 21120, 'strides':(2,2,2), 'kernel_size':(2,2,2)})
+    gen = generator(True, {'latent_dim': 2640, 'strides':(2,2,2)})
     disc = discriminator(params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(2,2,2), 'leak_value':0.25})
 
     model = Sequential()

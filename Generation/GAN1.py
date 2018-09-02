@@ -33,24 +33,20 @@ def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2)}):
     strides = params['strides']
 
     inputs = Input(shape=(l_dim,))
-    inputss = Reshape((22, 8, 15, 1), input_shape=(l_dim,))(inputs)
-    group1 = Deconv3D(512, (2,2,2), kernel_initializer='glorot_normal', bias_initializer='zeros')(inputss)
+    inputss = Reshape((22, 4, 1, 1), input_shape=(l_dim,))(inputs)
+    group1 = Deconv3D(512, (2,2,2), strides = (2,2,2), kernel_initializer='glorot_normal', bias_initializer='zeros')(inputss)
     group1 = BatchNormalization()(group1, training=phase_train)
     group1 = Activation(activation='relu')(group1)
 
-    group2 = Deconv3D(64, (2,2,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group1)
+    group2 = Deconv3D(64, (2,2,2), strides = (2,2,3), kernel_initializer='glorot_normal', bias_initializer='zeros')(group1)
     group2 = BatchNormalization()(group2, training=phase_train)
     group2 = Activation(activation='relu')(group2)
 
-    group3 = Deconv3D(1, (1,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
+    group3 = Deconv3D(1, (2,2,2), strides = (2,2,5), kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
     group3 = BatchNormalization()(group3, training=phase_train)
     group3 = Activation(activation='relu')(group3)
 
-    finals = Flatten()(group3)
-    finals = Dense(176*32*30)(finals)
-    finals = Reshape((176, 32, 30, 1))(finals)
-
-    geners = Model(inputs, finals)
+    geners = Model(inputs, group3)
     geners.summary()
     return geners
 
@@ -120,7 +116,7 @@ def train(b_size, epchs):
 
     x_train = (x_train.astype(np.float32) - 127.5)/127.5 #Scales from -1 to 1
 
-    gen = generator(True, {'latent_dim': 2640, 'strides':(2,2,2)})
+    gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2)})
     disc = discriminator(params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(2,2,2), 'leak_value':0.25})
 
     model = Sequential()
@@ -139,7 +135,7 @@ def train(b_size, epchs):
     for epoch in range(epchs):
         num_steps = int(x_train.shape[0]/b_size)
         for index in range(num_steps):
-            noise = np.random.uniform(-1, 1, size=(b_size, 2640))
+            noise = np.random.uniform(-1, 1, size=(b_size, 88))
             image_batch = x_train[index*b_size:(index+1)*b_size]
             gen_img = gen.predict(noise, verbose = 0)
             print(image_batch.shape)
@@ -147,7 +143,7 @@ def train(b_size, epchs):
             X = np.concatenate((image_batch, gen_img))
             y = [1] * b_size + [0] * b_size
             d_l = disc.train_on_batch(X, y)
-            noise = np.random.uniform(-1, 1, size=(b_size, 2640))
+            noise = np.random.uniform(-1, 1, size=(b_size, 88))
             disc.trainable = False
             g_loss = model.train_on_batch(noise, [1] * b_size)
             disc.trainable = True
@@ -156,10 +152,10 @@ def train(b_size, epchs):
                 disc.save_weights('discriminator', True)
 
 def gen(b_size, epchs):
-    gen = generator(True, {'latent_dim': 2640, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
+    gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
     gen.compile(loss='binary_crossentropy', optimizer="SGD")
     gen.load_weights('generator')
-    noise = np.random.uniform(-1, 1, (b_size, 2640))
+    noise = np.random.uniform(-1, 1, (b_size, 88))
     generated_images = gen.predict(noise, verbose=1)
     image = combine_images(generated_images)
     image = image*127.5+127.5

@@ -138,8 +138,66 @@ def train(b_size, epchs):
             noise = np.random.uniform(-1, 1, size=(b_size, 88))
             image_batch = x_train[index*b_size:(index+1)*b_size]
             gen_img = gen.predict(noise, verbose = 0)
-            print(image_batch.shape)
-            print(gen_img.shape)
+            X = np.concatenate((image_batch, gen_img))
+            y = [1] * b_size + [0] * b_size
+            d_l = disc.train_on_batch(X, y)
+            noise = np.random.uniform(-1, 1, size=(b_size, 88))
+            disc.trainable = False
+            g_loss = model.train_on_batch(noise, [1] * b_size)
+            disc.trainable = True
+            if index % 10 == 9:
+                gen.save_weights('generator', True)
+                disc.save_weights('discriminator', True)
+
+def retrain(b_size, epchs):
+    PD = np.load("/data/PD.npy")
+    Control = np.load("/data/Control.npy")
+    X = np.concatenate((PD, Control), axis=0)
+    y = [1] * PD.shape[0]  + [0] * Control.shape[0]
+    y = np.array(y)
+
+    (x_train, y_train), (x_test, y_test) = ([], []), ([], [])
+
+    rn = np.random.randint(100, size=614)
+    for i in range(614):
+        if(rn[i] < 70):
+            x_train.append(X[i])
+            y_train.append(y[i])
+        else:
+            x_test.append(X[i])
+            y_test.append(y[i])
+    x_train = np.array(x_train)
+    x_test = np.array(x_test)
+    y_train = np.array(y_train)
+    y_test = np.array(y_test)
+
+    x_train = (x_train.astype(np.float32) - 127.5)/127.5 #Scales from -1 to 1
+
+    gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2)})
+    disc = discriminator(params={'shape':shap, 'strides':(2,2,2), 'kernel_size':(2,2,2), 'leak_value':0.25})
+
+
+    model = Sequential()
+    model.add(gen)
+    disc.trainable = False
+    model.add(disc)
+
+    g_optimizer = Adam(lr = g_lr, beta_1 = beta)
+    d_optimizer = Adam(lr = d_lr, beta_1 = beta)
+
+    gen.compile(loss = 'binary_crossentropy', optimizer='SGD')
+    model.compile(loss = 'binary_crossentropy', optimizer = g_optimizer)
+    disc.trainable = True
+    disc.compile(loss = 'binary_crossentropy', optimizer = d_optimizer)
+    gen.load_weights("generator")
+    disc.load_weights("disciminator")
+
+    for epoch in range(epchs):
+        num_steps = int(x_train.shape[0]/b_size)
+        for index in range(num_steps):
+            noise = np.random.uniform(-1, 1, size=(b_size, 88))
+            image_batch = x_train[index*b_size:(index+1)*b_size]
+            gen_img = gen.predict(noise, verbose = 0)
             X = np.concatenate((image_batch, gen_img))
             y = [1] * b_size + [0] * b_size
             d_l = disc.train_on_batch(X, y)
@@ -168,3 +226,5 @@ if __name__ == "__main__":
         train(b_size = args.b_size, epchs = args.epochs)
     elif args.mode == "generate":
         gen(b_size = args.b_size, epchs = args.epochs)
+    elif args.mode == "retrain":
+        retrain(b_size = args.b_size, epchs = args.epochs)

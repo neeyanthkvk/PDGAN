@@ -88,6 +88,7 @@ def get_args():
     parser.add_argument("--b_size", type=int, default=4)
     parser.add_argument("--train", dest="train", action="store_true")
     parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--img", type=int, default=50)
     parser.set_defaults(train=False)
     args = parser.parse_args()
     return args
@@ -209,7 +210,7 @@ def retrain(b_size, epchs):
                 gen.save_weights('generator', True)
                 disc.save_weights('discriminator', True)
 
-def gen(b_size, epchs):
+def gen(b_size, epchs, num_images):
     gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
     gen.compile(loss='binary_crossentropy', optimizer="SGD")
     gen.load_weights('generator')
@@ -225,6 +226,6 @@ if __name__ == "__main__":
     if args.mode == "train":
         train(b_size = args.b_size, epchs = args.epochs)
     elif args.mode == "generate":
-        gen(b_size = args.b_size, epchs = args.epochs)
+        gen(b_size = args.b_size, epchs = args.epochs, num_images = args.img)
     elif args.mode == "retrain":
         retrain(b_size = args.b_size, epchs = args.epochs)

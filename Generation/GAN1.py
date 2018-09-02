@@ -89,7 +89,7 @@ def discriminator(phase_train = True, params={'shape':shap, 'strides':(2,2,2), '
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", type=str)
-    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--b_size", type=int, default=4)
     parser.add_argument("--train", dest="train", action="store_true")
     parser.add_argument("--epochs", type=int, default=10)
     parser.set_defaults(train=False)
@@ -139,7 +139,7 @@ def train(b_size, epchs):
     for epoch in range(epchs):
         num_steps = int(x_train.shape[0]/b_size)
         for index in range(num_steps):
-            noise = np.random.uniform(-1, 1, size=(b_size, 1000))
+            noise = np.random.uniform(-1, 1, size=(b_size, 2640))
             image_batch = x_train[index*b_size:(index+1)*b_size]
             gen_img = gen.predict(noise, verbose = 0)
             print(image_batch.shape)
@@ -147,19 +147,19 @@ def train(b_size, epchs):
             X = np.concatenate((image_batch, gen_img))
             y = [1] * b_size + [0] * b_size
             d_l = disc.train_on_batch(X, y)
-            noise = np.random.uniform(-1, 1, size=(b_size, 1000))
+            noise = np.random.uniform(-1, 1, size=(b_size, 2640))
             disc.trainable = False
-            g_loss = model.train_on_batch(noise, [1] * BATCH_SIZE)
+            g_loss = model.train_on_batch(noise, [1] * b_size)
             disc.trainable = True
             if index % 10 == 9:
                 gen.save_weights('generator', True)
                 disc.save_weights('discriminator', True)
 
 def gen(b_size, epchs):
-    gen = generator(True, {'latent_dim': 1000, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
+    gen = generator(True, {'latent_dim': 2640, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
     gen.compile(loss='binary_crossentropy', optimizer="SGD")
     gen.load_weights('generator')
-    noise = np.random.uniform(-1, 1, (BATCH_SIZE, 100))
+    noise = np.random.uniform(-1, 1, (b_size, 2640))
     generated_images = gen.predict(noise, verbose=1)
     image = combine_images(generated_images)
     image = image*127.5+127.5
@@ -169,6 +169,6 @@ def gen(b_size, epchs):
 if __name__ == "__main__":
     args = get_args()
     if args.mode == "train":
-        train(b_size = args.batch_size, epchs = args.epochs)
+        train(b_size = args.b_size, epchs = args.epochs)
     elif args.mode == "generate":
-        gen(b_size = args.batch_size, epchs = args.epochs)
+        gen(b_size = args.b_size, epchs = args.epochs)

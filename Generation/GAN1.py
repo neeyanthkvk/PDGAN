@@ -3,7 +3,7 @@
 from __future__ import print_function, division
 
 from keras.models import Model, Sequential
-from keras.layers import Input, Reshape
+from keras.layers import Input, Reshape, Flatten, Dense
 from keras.layers.core import Activation
 from keras.layers.convolutional import Conv3D, Deconv3D
 from keras.layers.advanced_activations import LeakyReLU
@@ -42,15 +42,15 @@ def generator(phase_train=True, params={'latent_dim':200, 'strides':(2,2,2)}):
     group2 = BatchNormalization()(group2, training=phase_train)
     group2 = Activation(activation='relu')(group2)
 
-    group3 = Deconv3D(8, (2,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
+    group3 = Deconv3D(1, (1,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group2)
     group3 = BatchNormalization()(group3, training=phase_train)
     group3 = Activation(activation='relu')(group3)
 
-    group4 = Deconv3D(1, (1,1,1), strides = strides, kernel_initializer='glorot_normal', bias_initializer='zeros')(group3)
-    group4 = BatchNormalization()(group4, training=phase_train)
-    group4 = Activation(activation='relu')(group4)
+    finals = Flatten()(group3)
+    finals = Dense(176*32*30)(finals)
+    finals = Reshape((176, 32, 30, 1))(finals)
 
-    geners = Model(inputs, group4)
+    geners = Model(inputs, finals)
     geners.summary()
     return geners
 

@@ -7,7 +7,7 @@ import time
 
 PD_DIR = "/data/2D/PD/"
 CONTROL_DIR = "/data/2D/Control/"
-'''
+
 ar = np.zeros((466, 176, 32, 30, 1))
 count = 0
 for i in range(2500):
@@ -43,7 +43,7 @@ for i in range(2500):
         print(count)
 np.save("/data/PD.npy", ar)
 
-'''
+
 count = 0
 ar2 = np.zeros((148, 176, 32, 30, 1))
 for i in range(675):

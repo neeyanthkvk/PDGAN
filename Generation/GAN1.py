@@ -2,6 +2,7 @@
 #https://github.com/jacobgil/keras-dcgan/blob/master/dcgan.py
 from __future__ import print_function, division
 
+import keras
 from keras.models import Model, Sequential
 from keras.layers import Input, Reshape, Flatten, Dense
 from keras.layers.core import Activation
@@ -210,7 +211,7 @@ def retrain(b_size, epchs):
                 gen.save_weights('generator', True)
                 disc.save_weights('discriminator', True)
 
-def gen(b_size, epchs, num_images):
+def gen(num_images):
     gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
     gen.compile(loss='binary_crossentropy', optimizer="SGD")
     gen.load_weights('generator')
@@ -226,6 +227,6 @@ if __name__ == "__main__":
     if args.mode == "train":
         train(b_size = args.b_size, epchs = args.epochs)
     elif args.mode == "generate":
-        gen(b_size = args.b_size, epchs = args.epochs, num_images = args.img)
+        gen( num_images = args.img)
     elif args.mode == "retrain":
         retrain(b_size = args.b_size, epchs = args.epochs)

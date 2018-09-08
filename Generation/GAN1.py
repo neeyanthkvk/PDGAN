@@ -136,6 +136,7 @@ def train(b_size, epchs):
 
     for epoch in range(epchs):
         num_steps = int(x_train.shape[0]/b_size)
+        print(epoch)
         for index in range(num_steps):
             noise = np.random.uniform(-1, 1, size=(b_size, 88))
             image_batch = x_train[index*b_size:(index+1)*b_size]
@@ -215,12 +216,16 @@ def gen(num_images):
     gen = generator(True, {'latent_dim': 88, 'strides':(2,2,2), 'kernel_size':(5,5,5)})
     gen.compile(loss='binary_crossentropy', optimizer="SGD")
     gen.load_weights('generator')
-    noise = np.random.uniform(-1, 1, (b_size, 88))
-    generated_images = gen.predict(noise, verbose=1)
-    image = combine_images(generated_images)
-    image = image*127.5+127.5
-    Image.fromarray(image.astype(np.uint8)).save(
-        "generated_image.png")
+    for i in range(num_images):
+        os.system("mkdir /data/Images/" + str(i))    
+        noise = np.random.uniform(-1, 1, (1, 88))
+        image = gen.predict(noise, verbose=1)
+        image = image*127.5+127.5
+        image = np.reshape(image, (176, 32, 30))
+
+        print(image.shape)
+        for j in range(image.shape[0]):
+            Image.fromarray(image[j].astype(np.uint8)).save("/data/Images/" + str(i) + "/" + str(j) + ".png")
 
 if __name__ == "__main__":
     args = get_args()

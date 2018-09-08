@@ -20,7 +20,7 @@ def main(job_id, params):
     opt = params['optimizer'][0]
 
     model = Sequential()
-    model.add(Conv3D(conv_layers[0], kernel_size=(7, 7, 7), input_shape=(176, 256, 240, 1), padding="same"))
+    model.add(Conv3D(conv_layers[0], kernel_size=(7, 7, 7), input_shape=(176, 32, 30, 1), padding="same"))
     model.add(LeakyReLU())
     model.add(Conv3D(conv_layers[0], padding="same", kernel_size=(7, 7, 7)))
     model.add(LeakyReLU())
@@ -41,13 +41,6 @@ def main(job_id, params):
     model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
     model.add(Dropout(0.25))
 
-    model.add(Conv3D(conv_layers[3], padding="same", kernel_size=(3, 3, 3)))
-    model.add(LeakyReLU())
-    model.add(Conv3D(conv_layers[3], padding="same", kernel_size=(3, 3, 3)))
-    model.add(LeakyReLU())
-    model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
-    model.add(Dropout(0.25))
-
     model.add(Flatten())
     model.add(BatchNormalization())
     model.add(Dense(dense_layer, activation='relu'))
@@ -56,7 +49,7 @@ def main(job_id, params):
     model.add(Dense(2, activation='softmax'))
     model.compile(loss=categorical_crossentropy, optimizer=opt, metrics=['accuracy'])
     model.summary()
-    plot_model(model, show_shapes=True, show_layer_names=False, rankdir = 'LR', to_file='Conv_3D.png')
+    #plot_model(model, show_shapes=True, show_layer_names=False, rankdir = 'LR', to_file='Conv_3D.png')
 
     # Data Loading
     y = np.zeros((466+148, 2))
@@ -73,7 +66,7 @@ def main(job_id, params):
 
 
     # Model Testing
-    history = model.fit(x_train, y_train, validation_data = (x_test, y_test), batch_size=1, epochs = 5, verbose = 1, shuffle = True)
+    history = model.fit(x_train, y_train, validation_data = (x_test, y_test), batch_size=1, epochs = 15, verbose = 1, shuffle = True)
     #import pickle
     #pickle.dump(history, open("history.pkl", "wb"))
     #model.save_weights("7312018.h5")

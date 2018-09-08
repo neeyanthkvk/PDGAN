@@ -4,7 +4,7 @@ name:     "Spearmint"
 variable {
  name: "conv"
  type: INT
- size: 4
+ size: 3
  min:  1
  max:  64
 }

@@ -12,8 +12,9 @@ Hi this is my science fair project for the 2018-2019 Science Fair, and it concer
 * [medSynthesis](https://github.com/ginobilinie/medSynthesis) (Written in Tensorflow)
 
 ### Example Generated Files
-[Example 1](Gen1.mp4)
-[Example 2](Gen2.mp4)
+![Example 1](Gen1.gif)
+
+![Example 2](Gen2.gif)
 
 ### Papers
 * [1](https://arxiv.org/abs/1803.01229)

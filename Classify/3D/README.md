@@ -17,6 +17,10 @@ Unsure how to combat this. Feeding disproportionately to balance the data. **Sol
 
 Had to set batch size to 1 to ensure GPU wouldn't crash mid-training. More specifics per file.
 
+### GAN File Generation
+
+Seemed to do the trick. With the augmented dataset the accuracy of the 3D Convolution model went from 91.4% to 96.6% after adding 86 more samples (increasing sample pool from 614 to 700). This was **without** the Spearmint optimization. Mission accomplished!!  
+
 ## Files
 [Conv_3D.py](Conv_3D.py) First Attempt at using straight Convolutional Layers. 424 (oof) minutes per epoch of training. Fine-tuning parameters before reporting results. Accuracy: 91.4%, Loss: 0.1520
 

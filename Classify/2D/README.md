@@ -1,7 +1,6 @@
 # 2-Dimensional Categorization
 
-The 2-Dimensional classification involved slicing the MRI images into 2 dimensional images, and then running image classification algorithms to classify each brain slide. Obviously, this is very biologically unsound, 
-
+The 2-Dimensional classification involved slicing the MRI images into 2 dimensional images, and then running image classification algorithms to classify each brain slide. Obviously, this is very biologically unsound, this led to some [research](https://www.researchgate.net/publication/255610868_Brain_MRI_Slices_Classification_Using_Least_Squares_Support_Vector_Machine).
 ## Problems
 
 ### Modularity

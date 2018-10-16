@@ -1,7 +1,12 @@
+.ipynb_checkpoints/
+._Project*
+Generation/generator
+Generation/discriminator
 *.h5
 *.npy
 *.png
 *.mat
 *.in
 *.csv
+*.txt
 *.out

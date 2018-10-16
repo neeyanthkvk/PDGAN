@@ -10,3 +10,4 @@ The files were stored in a proprietary format, one that could only be opened and
 [Test1.ipynb](Test1.ipynb) First attempt at using Pandas to extract the data from the CSV metadata file.
 
 ## Other Notes
+Unfinished!! Need help desciphering what these rows and columns mean and what I could do with them.

@@ -1,6 +1,6 @@
 # Parkinson's Project 2018-2019
 
-Hi this is my science fair project for the 2018-2019 Science Fair, and it concerns itself with the ability to help doctors treat and diagnose Parkinson's Disease
+This is my science fair project for the 2018-2019 Science Fair, and it concerns itself with the ability to help doctors treat and diagnose Parkinson's Disease
 
 ### Dataset
 * [PPMI](https://ida.loni.usc.edu/login.jsp?project=PPMI)

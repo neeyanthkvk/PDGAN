@@ -7,7 +7,7 @@ As a note, because of the ridiculous size, the GPU I'm working on CANNOT process
 
 ### Modularity
 
-Many of the images are of different sizes and shapes. Unfortunately, because many of them are ridiculously different, I decided to find the one shape that was most prominent in my dataset, and use it. It resulted in around 700 samples, with the shape being (256, 240, 176). Evidently because there are 10,813,440 dimensions, I ran into the curse of dimensionality. Will Try Some Tricks (Encoders??)
+Many of the images are of different sizes and shapes. Unfortunately, because many of them are ridiculously different, I decided to find the one shape that was most prominent in my dataset, and use it. It resulted in around 700 samples, with the shape being (256, 240, 176). Evidently there are 10,813,440 dimensions (a lot).
 
 ### Unequal Dataset
 

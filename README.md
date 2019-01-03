@@ -1,4 +1,4 @@
-# Parkinson's Project 2018-2019
+# PDGAN
 
 This is my science fair project for the 2018-2019 Science Fair, and it concerns itself with the ability to help doctors treat and diagnose Parkinson's Disease
 

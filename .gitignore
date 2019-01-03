@@ -10,3 +10,4 @@ Generation/discriminator
 *.csv
 *.txt
 *.out
+Methylation/

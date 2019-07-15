@@ -1,3 +1,8 @@
+"""
+Regular Deep CNN
+44 seconds/epoch for 25 epochs on Tesla K80
+Validation Accuracy 94.5%, loss 0.8214
+"""
 import os
 import pickle
 
@@ -8,7 +13,7 @@ from keras.models import Sequential
 from keras.layers import Conv3D, MaxPooling3D
 from keras.layers import Flatten, Dropout, Dense, Reshape, BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
-from keras.losses import categorical_crossentropy
+from keras.losses import binary_crossentropy
 
 BATCH_SIZE = 16
 output_PD_dir = "/data/Imaging/3D/PD"
@@ -77,22 +82,15 @@ model.add(LeakyReLU())
 model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
 model.add(Dropout(0.25))
 
-model.add(Conv3D(8, kernel_size=(3, 3, 3), padding="same"))
-model.add(LeakyReLU())
-model.add(Conv3D(8, kernel_size=(3, 3, 3), padding="same"))
-model.add(LeakyReLU())
-model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
-model.add(Dropout(0.25))
-
 model.add(Flatten())
 model.add(BatchNormalization())
 model.add(Dense(128, activation='relu'))
 model.add(BatchNormalization())
 model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
-model.compile(loss=categorical_crossentropy, optimizer='adam', metrics=['accuracy'])
+model.add(Dense(1, activation='softmax'))
+model.compile(loss=binary_crossentropy, optimizer='adam', metrics=['accuracy'])
 model.summary()
 
-history = model.fit_generator(train_batch, validation_data = test_batch, batch_size=BATCH_SIZE, epochs = 25, verbose = 1, shuffle = True)
+history = model.fit_generator(train_batch, validation_data = test_batch, epochs = 25, verbose = 1, shuffle = True, steps_per_epoch = 32, validation_steps = 8)
 pickle.dump(history, open("history.pkl", "wb"))
-model.save_weights("7312018.h5")
+model.save_weights("7312018_2.h5")

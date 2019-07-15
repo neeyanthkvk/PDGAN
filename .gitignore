@@ -3,6 +3,7 @@
 Generation/generator
 Generation/discriminator
 *.h5
+*.pkl
 *.npy
 *.png
 *.mat
@@ -10,4 +11,3 @@ Generation/discriminator
 *.csv
 *.txt
 *.out
-Methylation/

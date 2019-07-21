@@ -11,7 +11,7 @@ data_PD_dir = "/data/Imaging/Raw/PD"
 data_Control_dir = '/data/Imaging/Raw/Control'
 output_PD_dir = "/data/Imaging/3D/PD"
 output_Control_dir = "/data/Imaging/3D/Control"
-pref_shape = (32, 32, 32)
+pref_shape = (128, 128, 128)
 
 
 def reshape(arr):
@@ -23,8 +23,8 @@ def reshape(arr):
 
 def gen_numpy_arrays(indir, outdir):
     count_file = 0
-    for path in glob.iglob(os.path.join(indir,"*/*/*/*")):
-        _, _, _, _, _, pat, modal, date, id = tuple(path.split("/"))
+    for path in glob.iglob(os.path.join(indir, "*/*/*/*")):
+        _, _, _, _, _, pat, modal, date, id_ = tuple(path.split("/"))
         try:
             if len(os.listdir(path)) < 5:
                 continue
@@ -40,7 +40,7 @@ def gen_numpy_arrays(indir, outdir):
             for echo in echo_data:
                 np_arr = np.zeros((*dat_shape, len(echo_data[echo])))
                 for i, (key, value) in enumerate(sorted(echo_data[echo].items())):
-                    np_arr[:,:,i] = value
+                    np_arr[:, :, i] = value
                 new_arr = reshape(np_arr)
                 np.save(os.path.join(outdir, str(count_file) + ".npy"), new_arr)
                 count_file += 1

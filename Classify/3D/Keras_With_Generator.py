@@ -91,6 +91,8 @@ model.add(Dense(1, activation='softmax'))
 model.compile(loss=binary_crossentropy, optimizer='adam', metrics=['accuracy'])
 model.summary()
 
-history = model.fit_generator(train_batch, validation_data = test_batch, epochs = 25, verbose = 1, shuffle = True, steps_per_epoch = 32, validation_steps = 8)
+history = model.fit_generator(train_batch, validation_data=test_batch,
+                              epochs=25, verbose=1, shuffle=True,
+                              steps_per_epoch=32, validation_steps=8)
 pickle.dump(history, open("history.pkl", "wb"))
 model.save_weights("7312018_2.h5")

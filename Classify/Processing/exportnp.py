@@ -2,7 +2,6 @@
 # coding: utf-8
 import os
 import glob
-import numpy as np
 import pydicom as pd
 from scipy.ndimage import zoom
 

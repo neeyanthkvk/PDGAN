@@ -44,6 +44,8 @@ def gen_numpy_arrays(indir, outdir):
                 new_arr = reshape(np_arr)
                 np.save(os.path.join(outdir, str(count_file) + ".npy"), new_arr)
                 count_file += 1
+                if count_file % 10 == 0:
+                    print("DEBUG: ", count_file)
         except KeyError:
             print("ERROR: ", path)
 

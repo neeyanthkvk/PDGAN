@@ -20,7 +20,7 @@ output_PD_dir = "/data/Imaging/3D/PD"
 PD_size = len(os.listdir(output_PD_dir))
 output_Control_dir = "/data/Imaging/3D/Control"
 Control_size = len(os.listdir(output_Control_dir))
-
+print("TOTAL SIZE: ", PD_size+Control_size)
 
 def load_data(ids):
     X = []
@@ -54,7 +54,7 @@ test_batch = batch_generator(test_inds)
 
 model = Sequential()
 model.add(Reshape(target_shape=(128, 128, 128, 1), input_shape=(128, 128, 128)))
-model.add(Conv3D(32, kernel_size=(7, 7, 7), padding="same"))
+model.add(Conv3D(32, kernel_size=(7, 7, 7), strides = (2, 2, 2), padding="same"))
 model.add(LeakyReLU())
 model.add(Conv3D(32, kernel_size=(7, 7, 7), padding="same"))
 model.add(LeakyReLU())
@@ -92,20 +92,6 @@ model.add(Dropout(0.25))
 model.add(Conv3D(64, kernel_size=(5, 5, 5), padding="same"))
 model.add(LeakyReLU())
 model.add(Conv3D(64, kernel_size=(5, 5, 5), padding="same"))
-model.add(LeakyReLU())
-model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
-model.add(Dropout(0.25))
-
-model.add(Conv3D(32, kernel_size=(3, 3, 3), padding="same"))
-model.add(LeakyReLU())
-model.add(Conv3D(32, kernel_size=(3, 3, 3), padding="same"))
-model.add(LeakyReLU())
-model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
-model.add(Dropout(0.25))
-
-model.add(Conv3D(32, kernel_size=(3, 3, 3), padding="same"))
-model.add(LeakyReLU())
-model.add(Conv3D(32, kernel_size=(3, 3, 3), padding="same"))
 model.add(LeakyReLU())
 model.add(MaxPooling3D(pool_size=(2, 2, 2), padding="same"))
 model.add(Dropout(0.25))

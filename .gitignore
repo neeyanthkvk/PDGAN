@@ -1,9 +1,5 @@
-.idea/
 .ipynb_checkpoints/
 ._Project*
-Data/
-Application/
-ScienceFair/
 Generation/generator
 Generation/discriminator
 *.h5

@@ -1,5 +1,7 @@
+.idea/
 .ipynb_checkpoints/
 ._Project*
+Application/
 Generation/generator
 Generation/discriminator
 *.h5

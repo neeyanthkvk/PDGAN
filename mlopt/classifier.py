@@ -1,5 +1,4 @@
 from sklearn.model_selection import train_test_split, KFold
-from skopt import gp_minimize
 import pandas as pd
 import numpy as np
 import pickle
@@ -7,14 +6,15 @@ import os
 
 
 class Classifier:
-    def __init__(self, inputs, labels, create_method, train_method, evaluate_method, metrics):
+    def __init__(self, inputs, labels, create_method, train_method, evaluate_method, save_method, metrics):
         self.X = inputs
         self.y = labels
         self.create_model = create_method
         self.train = train_method
         self.test = evaluate_method
+        self.save = save_method
         self.evaluation_metrics = metrics
-        
+
     def print_desc(self):
         print("***Printing Model Information*** \n")
         print("**Data Information** \n")
@@ -25,29 +25,31 @@ class Classifier:
             print("Testing Data Shape: " + self.test_data.shape)
         if(self.num_folds is not None):
             print("Number of Crossvalidation Folds: " + self.num_folds)
-    
+
         print("**Evaluation Information** \n")
         if(self.training_complete):
             print("Model Performance: " + self.metrics)
             print("Number of Training Epochs Completed: " + self.epochs)
-            
+
     def split_data(self, split_ratio = 0.2):
         self.data_split = split_ratio
         self.random_seed = np.randint(1000)
-        self.train_data, self.test_data, self.train_labels, self.test_labels = test_train_split(self.X, self.y, 
+        self.train_data, self.test_data, self.train_labels, self.test_labels = test_train_split(self.X, self.y,
                                                                                                 random_state = self.random_seed,
                                                                                                 test_size = self.data_split)
         print("Split Successful: Splitting with the Ratio of: " + self.data_split)
-        
+
     def set_num_folds(self, num_folds = 8):
         self.num_folds = num_folds
-        
-    def single_training_cycle(self, X_train, y_train, X_test, y_test):
+
+    def single_training_cycle(self, X_train, y_train, X_test, y_test, save = False, save_dir = None):
         self.curr_model = self.create_model()
         self.train(self.curr_model, X_train, y_train)
         y_test_our = self.test(self.curr_model, X_test)
+        if(save):
+            self.save(self.curr_model, os.path.join(save_dir, "model"))
         return y_test, y_test_our
-    
+
     def train(self):
         if(self.data_split is None):
             raise Error("Data Split Not Defined")
@@ -71,15 +73,15 @@ class Classifier:
             for metric in self.evaluation_metrics:
                 self.training_results[metric.__name__] = metric(y_acc, y_our)
         self.trained = True;
-                
-    def evaluate(self):
+
+    def evaluate(self, save = False, save_dir = None):
         if(self.trained is None):
             raise Error("Model not Trained")
         self.testing_results = {}
-        y_acc, y_our = single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels)
+        y_acc, y_our = single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels, save = save, save_dir = save_dir)
         for metric in self.evaluation_metrics:
             self.testing_results[metric.__name__] = metric(y_acc, y_our)
-            
+
     def export(self, dir_name):
         d = {}
         if(self.data_split is not None):
@@ -94,47 +96,17 @@ class Classifier:
         df.to_csv(os.path.join(dir_name, "options.csv"))
         with open(os.path.join(dir_name, 'metrics.pkl'), 'wb') as handle:
                 pickle.dump(d, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                
+
     def get_test_metric(self, metric):
         if(self.testing_results is None):
             raise Error("Model not Evaluated")
         if(metric.__name__ not in self.testing_results):
             raise Error("Metric not Evaluated")
         return self.testing_results[metric.__name__]
-    
+
     def get_training_metric(self, metric):
         if(self.training_results is None):
             raise Error("Model not Trained")
         if(metric.__name__ not in self.training_results):
             raise Error("Metric not Trained")
         return self.testing_results[metric.__name__]
-    
-    
-def Optimizer:
-    def __init__(self, min_func, model_class, parameters, X, y):
-        """
-        The Model Class must have a create_method, train_method, and evaluate method
-        """
-        self.error = min_func
-        self.model = model_class
-        self.parameters = parameters
-        self.X = X
-        self.y = y
-        
-    def single_iter(X, y):
-        def inner_eval(params):
-            model = model_class(params)
-            classifier = Classifier(X, y, model.create_method, model.train_method, model.evaluate_method, [self.error])
-            classifier.split_data()
-            classifier.set_num_folds()
-            classifier.train()
-            classifier.evaluate()
-            return classifier.get_test_metric(self.error)
-        return inner_eval
-    
-    def run_optimization(self, save_dir):
-        self.result = gp_minimize(single_iter(self.X, self.y), parameters)
-        save_optimization(save_dir)
-        
-    def save_optimization(self, save_dir):
-        np.save(os.path.join(save_dir, "sol.npy"), self.result.x)

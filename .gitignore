@@ -13,3 +13,4 @@ Generation/discriminator
 *.csv
 *.txt
 *.out
+*.pyc

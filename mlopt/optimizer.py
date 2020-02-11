@@ -1,5 +1,5 @@
 from skopt import gp_minimize
-from classifier import Classifier
+from mlopt.classifier import Classifier
 
 class Optimizer:
     def __init__(self, min_func, model_class, parameters, X, y):

@@ -116,7 +116,7 @@ class NeuralNetwork(Model):
 
     def train_method(self, model, X_train, y_train):
         model[1].fit(X_train)
-        model[0].fit(model[1].transform(X_train), y_train, epochs = 20, verbose = 1)
+        model[0].fit(model[1].transform(X_train), y_train, epochs = 20, verbose = 0)
 
     def evaluate_method(self, model, X_test):
         return model[0].predict(model[1].transform(X_test))

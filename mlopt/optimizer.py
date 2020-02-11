@@ -18,7 +18,7 @@ class Optimizer:
             classifier = Classifier(X, y, model.create_method, model.train_method,
                                     model.evaluate_method, model.save_method, [self.error])
             classifier.split_data()
-            classifier.set_num_folds()
+            # classifier.set_num_folds()
             classifier.train_cycle()
             classifier.evaluate(save = save, save_dir = save_dir)
             if verbose:

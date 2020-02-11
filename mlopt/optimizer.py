@@ -1,4 +1,5 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 from skopt import gp_minimize
 from mlopt.classifier import Classifier
@@ -29,7 +30,7 @@ class Optimizer:
         return inner_eval
 
     def run_optimization(self, save_dir):
-        self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters)
+        self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters, verbose=True, n_calls = 10)
         self.save_optimization(save_dir)
 
     def save_optimization(self, save_dir):

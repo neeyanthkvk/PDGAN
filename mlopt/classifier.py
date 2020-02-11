@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class Classifier:

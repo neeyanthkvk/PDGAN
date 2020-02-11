@@ -7,14 +7,14 @@ class Optimizer:
         The Model Class must have a create_method, train_method, evaluate_method, and save_method
         """
         self.error = min_func
-        self.model = model_class
+        self.model_class = model_class
         self.parameters = parameters
         self.X = X
         self.y = y
 
     def single_iter(self, X, y, save = False, save_dir = None):
         def inner_eval(params):
-            model = model_class(params)
+            model = self.model_class(params)
             classifier = Classifier(X, y, model.create_method, model.train_method,
                                     model.evaluate_method, model.save_method, [self.error])
             classifier.split_data()

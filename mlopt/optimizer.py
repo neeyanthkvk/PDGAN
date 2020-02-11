@@ -25,9 +25,9 @@ class Optimizer:
         return inner_eval
 
     def run_optimization(self, save_dir):
-        self.result = gp_minimize(self.single_iter(self.X, self.y), parameters)
+        self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters)
         save_optimization(save_dir)
 
     def save_optimization(self, save_dir):
         np.save(os.path.join(save_dir, "sol.npy"), self.result.x)
-        self.single_iter(self.X, self.y, save = True, save_dir = save_dir)
+        self.single_iter(self.X, self.y, save = True, save_dir = save_dir)(self.result.x)

@@ -67,7 +67,7 @@ class Classifier:
                 for metric in self.evaluation_metrics:
                     if metric.__name__ not in self.training_results:
                         self.training_results[metric.__name__] = []
-                    print("**DEBUG: SPLIT " + counter + " METRIC " + metric.__name__ + "HAS VALUE " + metric(y_acc, y_our))
+                    print("**DEBUG: SPLIT " + str(counter) + " METRIC " + metric.__name__ + "HAS VALUE " + str(metric(y_acc, y_our)))
                     self.training_results[metric.__name__].append(metric(y_acc, y_our))
         else:
             self.training_results = {}

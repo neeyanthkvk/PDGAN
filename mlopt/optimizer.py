@@ -12,7 +12,7 @@ class Optimizer:
         self.X = X
         self.y = y
 
-    def single_iter(self, X, y, save = False, save_dir = None):
+    def single_iter(self, X, y, save = False, save_dir = None, verbose = False):
         def inner_eval(params):
             model = self.model_class(params)
             classifier = Classifier(X, y, model.create_method, model.train_method,
@@ -21,6 +21,8 @@ class Optimizer:
             classifier.set_num_folds()
             classifier.train()
             classifier.evaluate(save = save, save_dir = save_dir)
+            if(verbose):
+                classifier.print_desc()
             return classifier.get_test_metric(self.error)
         return inner_eval
 
@@ -30,4 +32,4 @@ class Optimizer:
 
     def save_optimization(self, save_dir):
         np.save(os.path.join(save_dir, "sol.npy"), self.result.x)
-        self.single_iter(self.X, self.y, save = True, save_dir = save_dir)(self.result.x)
+        self.single_iter(self.X, self.y, save = True, save_dir = save_dir, verbose = True)(self.result.x)

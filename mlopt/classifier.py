@@ -33,7 +33,7 @@ class Classifier:
 
     def split_data(self, split_ratio = 0.2):
         self.data_split = split_ratio
-        self.random_seed = np.randint(1000)
+        self.random_seed = np.random.randint(1000)
         self.train_data, self.test_data, self.train_labels, self.test_labels = test_train_split(self.X, self.y,
                                                                                                 random_state = self.random_seed,
                                                                                                 test_size = self.data_split)

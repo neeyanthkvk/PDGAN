@@ -30,4 +30,4 @@ class Optimizer:
 
     def save_optimization(self, save_dir):
         np.save(os.path.join(save_dir, "sol.npy"), self.result.x)
-        single_iter(self.X, self.y, save = True, save_dir = save_dir)
+        self.single_iter(self.X, self.y, save = True, save_dir = save_dir)

@@ -14,20 +14,21 @@ class Classifier:
         self.test = evaluate_method
         self.save = save_method
         self.evaluation_metrics = metrics
+        self.training_complete = False
 
     def print_desc(self):
         print("***Printing Model Information*** \n")
         print("**Data Information** \n")
         print("Data Shape: " + self.X.shape)
-        if(self.data_split is not None):
+        if hasattr(self, "data_split"):
             print("Data Split: " + self.data_split)
             print("Training Data Shape: " + self.train_data.shape)
             print("Testing Data Shape: " + self.test_data.shape)
-        if(self.num_folds is not None):
+        if hasattr(self, "num_folds"):
             print("Number of Crossvalidation Folds: " + self.num_folds)
 
         print("**Evaluation Information** \n")
-        if(self.training_complete):
+        if self.training_complete:
             print("Model Performance: " + str(self.metrics))
             print("Number of Training Epochs Completed: " + self.epochs)
 
@@ -46,17 +47,17 @@ class Classifier:
         self.curr_model = self.create_model()
         self.train(self.curr_model, X_train, y_train)
         y_test_our = self.test(self.curr_model, X_test)
-        if(save):
+        if save:
             self.save(self.curr_model, os.path.join(save_dir, "model"))
         return y_test, y_test_our
 
     def train_cycle(self):
-        if(self.data_split is None):
+        if hasattr(self, "data_split"):
             raise Exception("Data Split Not Defined")
-        if(self.trained):
+        if hasattr(self, "trained"):
             raise Exception("Already Trainined")
         self.curr_model = self.create_model()
-        if(self.num_folds is not None):
+        if self.num_folds is not None:
             self.training_results = {}
             kf = KFold(n_splits = self.num_folds)
             for counter, train_index, test_index in enumerate(kf.split(self.train_data)):
@@ -73,10 +74,10 @@ class Classifier:
             y_acc, y_our = self.single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels)
             for metric in self.evaluation_metrics:
                 self.training_results[metric.__name__] = metric(y_acc, y_our)
-        self.trained = True;
+        self.trained = True
 
     def evaluate(self, save = False, save_dir = None):
-        if(self.trained is None):
+        if hasattr(self, "trained"):
             raise Exception("Model not Trained")
         self.testing_results = {}
         y_acc, y_our = self.single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels, save = save, save_dir = save_dir)
@@ -85,27 +86,27 @@ class Classifier:
 
     def export(self, dir_name):
         d = {}
-        if(self.data_split is not None):
+        if hasattr(self, "data_split"):
             d["data_split"] = [self.data_split]
-        if(self.num_folds is not None):
+        if hasattr(self, "num_folds"):
             d["num_folds"] = [self.num_folds]
-        if(self.random_seed is not None):
+        if hasattr(self, "random_seed"):
             d["random_seed"] = self.random_seed
-        if(self.metrics is not None):
+        if hasattr(self, "metrics"):
             d["metrics"] = [metric.__name__ for metric in self.metrics]
         df = pd.DataFrame(data = d)
         df.to_csv(os.path.join(dir_name, "options.csv"))
 
     def get_test_metric(self, metric):
-        if(self.testing_results is None):
+        if self.testing_results is None:
             raise Exception("Model not Evaluated")
-        if(metric.__name__ not in self.testing_results):
+        if metric.__name__ not in self.testing_results:
             raise Exception("Metric not Evaluated")
         return self.testing_results[metric.__name__]
 
     def get_training_metric(self, metric):
-        if(self.training_results is None):
+        if self.training_results is None:
             raise Exception("Model not Trained")
-        if(metric.__name__ not in self.training_results):
+        if metric.__name__ not in self.training_results:
             raise Exception("Metric not Trained")
         return self.testing_results[metric.__name__]

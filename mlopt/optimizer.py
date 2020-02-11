@@ -21,7 +21,7 @@ class Optimizer:
             classifier.set_num_folds()
             classifier.train_cycle()
             classifier.evaluate(save = save, save_dir = save_dir)
-            if(verbose):
+            if verbose:
                 classifier.print_desc()
             return classifier.get_test_metric(self.error)
         return inner_eval

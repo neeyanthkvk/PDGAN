@@ -83,7 +83,7 @@ class Classifier:
         self.testing_results = {}
         y_acc, y_our = self.single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels, save = save, save_dir = save_dir)
         for metric in self.evaluation_metrics:
-            self.testing_results[metric.__name__] = metric(y_acc, y_our)
+            self.testing_results[metric.__name__] = metric(y_acc, np.nan_to_num(y_our, nan=2))
 
     def export(self, dir_name):
         d = {}

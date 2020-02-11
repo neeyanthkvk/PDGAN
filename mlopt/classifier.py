@@ -77,8 +77,8 @@ class Classifier:
         self.trained = True
 
     def evaluate(self, save = False, save_dir = None):
-        if hasattr(self, "trained"):
-            raise Exception("Model not Trained")
+        # if hasattr(self, "trained"):
+        #     raise Exception("Model not Trained")
         self.testing_results = {}
         y_acc, y_our = self.single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels, save = save, save_dir = save_dir)
         for metric in self.evaluation_metrics:
@@ -98,15 +98,15 @@ class Classifier:
         df.to_csv(os.path.join(dir_name, "options.csv"))
 
     def get_test_metric(self, metric):
-        if self.testing_results is None:
-            raise Exception("Model not Evaluated")
-        if metric.__name__ not in self.testing_results:
-            raise Exception("Metric not Evaluated")
+        # if self.testing_results is None:
+        #     raise Exception("Model not Evaluated")
+        # if metric.__name__ not in self.testing_results:
+        #     raise Exception("Metric not Evaluated")
         return self.testing_results[metric.__name__]
 
     def get_training_metric(self, metric):
-        if self.training_results is None:
-            raise Exception("Model not Trained")
-        if metric.__name__ not in self.training_results:
-            raise Exception("Metric not Trained")
+        # if self.training_results is None:
+        #     raise Exception("Model not Trained")
+        # if metric.__name__ not in self.training_results:
+        #     raise Exception("Metric not Trained")
         return self.testing_results[metric.__name__]

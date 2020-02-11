@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from abc import ABC, abstractmethod
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.decomposition import PCA
 from tensorflow.python.ops import math_ops
 from keras.models import Sequential
 from keras.layers import Dense
@@ -91,7 +92,7 @@ class NeuralNetwork(Model):
     def __init__(self, params):
         """
         Arguments:
-            parameters: List of parameters. [Number of Estimators, Maximum Depth]
+            parameters: List of parameters. [Layer 1, Layer 2, Is New Error, PCA Dimensions]
         """
         super().__init__(params)
         self.parameters = params
@@ -102,24 +103,27 @@ class NeuralNetwork(Model):
         return -1 * K.mean(transformed)
 
     def create_method(self):
+        pca = PCA(n_components = self.parameters[3])
         model = Sequential()
-        model.add(Dense(self.parameters[0], activation="relu", input_shape=(864067,)))
+        model.add(Dense(self.parameters[0], activation="relu", input_shape=(self.parameters[3],)))
         model.add(Dense(self.parameters[1], activation="relu"))
         model.add(Dense(1, activation="softmax"))
         if(self.parameters[2]):
             model.compile(optimizer="adam", loss=self.new_binary_crossentropy, metrics=["accuracy"])
         else:
             model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-        return model
+        return (model, pca)
 
     def train_method(self, model, X_train, y_train):
-        model.fit(X_train, y_train, epochs = 20, verbose = 1)
+        model[1].fit(X_train)
+        model[0].fit(model[1].transform(X_train), y_train, epochs = 20, verbose = 1)
 
     def evaluate_method(self, model, X_test):
-        return model.predict(X_test)
+        return model[0].predict(model[1].transform(X_test))
 
     def save_method(self, model, save_loc):
-        model_json = model.to_json()
+        model_json = model[0].to_json()
         with open(save_loc + ".json", "w") as json_file:
             json_file.write(model_json)
-        model.save_weights(save_loc + ".h5")
+        model[0].save_weights(save_loc + ".h5")
+        pickle.dump(model[1], open(save_loc + ".pca", "wb"))

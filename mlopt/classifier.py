@@ -28,7 +28,7 @@ class Classifier:
 
         print("**Evaluation Information** \n")
         if(self.training_complete):
-            print("Model Performance: " + str(self.metrics))5
+            print("Model Performance: " + str(self.metrics))
             print("Number of Training Epochs Completed: " + self.epochs)
 
     def split_data(self, split_ratio = 0.2):

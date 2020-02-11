@@ -1,3 +1,5 @@
+import os
+import numpy as np
 from skopt import gp_minimize
 from mlopt.classifier import Classifier
 
@@ -28,7 +30,7 @@ class Optimizer:
 
     def run_optimization(self, save_dir):
         self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters)
-        save_optimization(save_dir)
+        self.save_optimization(save_dir)
 
     def save_optimization(self, save_dir):
         np.save(os.path.join(save_dir, "sol.npy"), self.result.x)

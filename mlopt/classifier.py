@@ -57,7 +57,7 @@ class Classifier:
         # if hasattr(self, "trained"):
         #     raise Exception("Already Trainined")
         self.curr_model = self.create_model()
-        if self.num_folds is not None:
+        if hasattr(self, "num_folds"):
             self.training_results = {}
             kf = KFold(n_splits = self.num_folds)
             for counter, (train_index, test_index) in enumerate(kf.split(self.train_data)):

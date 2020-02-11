@@ -60,7 +60,7 @@ class Classifier:
         if self.num_folds is not None:
             self.training_results = {}
             kf = KFold(n_splits = self.num_folds)
-            for counter, train_index, test_index in enumerate(kf.split(self.train_data)):
+            for counter, (train_index, test_index) in enumerate(kf.split(self.train_data)):
                 X_train_split, X_test_split = self.train_data[train_index], self.train_data[test_index]
                 y_train_split, y_test_split = self.train_labels[train_index], self.train_labels[test_index]
                 y_acc, y_our = self.single_training_cycle(X_train_split, y_train_split, X_test_split, y_test_split)

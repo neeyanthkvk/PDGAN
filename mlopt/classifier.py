@@ -52,10 +52,10 @@ class Classifier:
         return y_test, y_test_our
 
     def train_cycle(self):
-        if hasattr(self, "data_split"):
-            raise Exception("Data Split Not Defined")
-        if hasattr(self, "trained"):
-            raise Exception("Already Trainined")
+        # if hasattr(self, "data_split"):
+        #     raise Exception("Data Split Not Defined")
+        # if hasattr(self, "trained"):
+        #     raise Exception("Already Trainined")
         self.curr_model = self.create_model()
         if self.num_folds is not None:
             self.training_results = {}

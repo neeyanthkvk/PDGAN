@@ -19,7 +19,7 @@ class Optimizer:
                                     model.evaluate_method, model.save_method, [self.error])
             classifier.split_data()
             classifier.set_num_folds()
-            classifier.train()
+            classifier.train_cycle()
             classifier.evaluate(save = save, save_dir = save_dir)
             if(verbose):
                 classifier.print_desc()

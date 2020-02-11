@@ -50,7 +50,7 @@ class Classifier:
             self.save(self.curr_model, os.path.join(save_dir, "model"))
         return y_test, y_test_our
 
-    def train(self):
+    def train_cycle(self):
         if(self.data_split is None):
             raise Exception("Data Split Not Defined")
         if(self.trained):

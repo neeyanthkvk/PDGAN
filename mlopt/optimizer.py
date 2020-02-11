@@ -25,7 +25,7 @@ class Optimizer:
         return inner_eval
 
     def run_optimization(self, save_dir):
-        self.result = gp_minimize(single_iter(self.X, self.y), parameters)
+        self.result = gp_minimize(self.single_iter(self.X, self.y), parameters)
         save_optimization(save_dir)
 
     def save_optimization(self, save_dir):

@@ -1,15 +1,12 @@
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import pickle
-import numpy as np
 import tensorflow as tf
 from abc import ABC, abstractmethod
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA
-from tensorflow.python.ops import math_ops
 from keras.models import Sequential
 from keras.layers import Dense
 import keras.backend as K
+
 
 class Model(ABC):
     def __init__(self, params):
@@ -78,8 +75,8 @@ class RandomForest(Model):
         self.parameters = params
 
     def create_method(self):
-        return RandomForestClassifier(n_samples = self.parameters[0],
-                                        max_depth = self.parameters[1])
+        return RandomForestClassifier(n_samples=self.parameters[0],
+                                      max_depth=self.parameters[1])
 
     def train_method(self, model, X_train, y_train):
         model.fit(X_train, y_train)
@@ -89,6 +86,7 @@ class RandomForest(Model):
 
     def save_method(self, model, save_loc):
         pickle.dump(model, open(save_loc, "wb"))
+
 
 class NeuralNetwork(Model):
     def __init__(self, params):
@@ -101,11 +99,12 @@ class NeuralNetwork(Model):
 
     def new_binary_crossentropy(self, y_true, y_pred):
         ones = K.ones(K.shape(y_true))
-        transformed = tf.math.add(tf.math.multiply(y_true, tf.math.log(y_pred)), tf.math.multiply(tf.math.subtract(ones, y_true), tf.math.log(tf.math.subtract(ones, y_pred))))
+        transformed = tf.math.add(tf.math.multiply(y_true, tf.math.log(y_pred)),
+                                  tf.math.multiply(tf.math.subtract(ones, y_true), tf.math.log(tf.math.subtract(ones, y_pred))))
         return -1 * K.mean(transformed)
 
     def create_method(self):
-        pca = PCA(n_components = self.parameters[3])
+        pca = PCA(n_components=self.parameters[3])
         model = Sequential()
         model.add(Dense(self.parameters[0], activation="relu", input_shape=(self.parameters[3],)))
         model.add(Dense(self.parameters[1], activation="relu"))
@@ -118,7 +117,7 @@ class NeuralNetwork(Model):
 
     def train_method(self, model, X_train, y_train):
         model[1].fit(X_train)
-        model[0].fit(model[1].transform(X_train), y_train, epochs = 20, verbose = 0)
+        model[0].fit(model[1].transform(X_train), y_train, epochs=20, verbose=0)
 
     def evaluate_method(self, model, X_test):
         return model[0].predict(model[1].transform(X_test))

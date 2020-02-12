@@ -26,7 +26,7 @@ class Optimizer:
             classifier.evaluate(save = save, save_dir = save_dir)
             if verbose:
                 classifier.print_desc()
-            return classifier.get_test_metric(self.error)
+            return -1 * classifier.get_test_metric(self.error)
         return inner_eval
 
     def run_optimization(self, save_dir):

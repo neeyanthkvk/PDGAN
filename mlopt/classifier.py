@@ -68,13 +68,13 @@ class Classifier:
                 for metric in self.evaluation_metrics:
                     if metric.__name__ not in self.training_results:
                         self.training_results[metric.__name__] = []
-                    print("**DEBUG: SPLIT " + str(counter) + " METRIC " + metric.__name__ + "HAS VALUE " + str(metric(y_acc, y_our)))
-                    self.training_results[metric.__name__].append(metric(y_acc, y_our))
+                    print("**DEBUG: SPLIT " + str(counter) + " METRIC " + metric.__name__ + "HAS VALUE " + str(metric(y_acc, np.nan_to_num(y_our))))
+                    self.training_results[metric.__name__].append(metric(y_acc, np.nan_to_num(y_our)))
         else:
             self.training_results = {}
             y_acc, y_our = self.single_training_cycle(self.train_data, self.train_labels, self.test_data, self.test_labels)
             for metric in self.evaluation_metrics:
-                self.training_results[metric.__name__] = metric(y_acc, y_our)
+                self.training_results[metric.__name__] = metric(y_acc, np.nan_to_num(y_our))
         self.trained = True
 
     def evaluate(self, save = False, save_dir = None):

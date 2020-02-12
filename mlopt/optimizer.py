@@ -30,7 +30,7 @@ class Optimizer:
         return inner_eval
 
     def run_optimization(self, save_dir):
-        self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters, verbose=True, n_calls = 10)
+        self.result = gp_minimize(self.single_iter(self.X, self.y), self.parameters, verbose=True, n_calls = 30)
         self.save_optimization(save_dir)
 
     def save_optimization(self, save_dir):

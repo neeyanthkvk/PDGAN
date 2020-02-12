@@ -20,18 +20,18 @@ class Classifier:
     def print_desc(self):
         print("***Printing Model Information*** \n")
         print("**Data Information** \n")
-        print("Data Shape: " + self.X.shape)
+        print("Data Shape: " + str(self.X.shape))
         if hasattr(self, "data_split"):
-            print("Data Split: " + self.data_split)
-            print("Training Data Shape: " + self.train_data.shape)
-            print("Testing Data Shape: " + self.test_data.shape)
+            print("Data Split: " + str(self.data_split))
+            print("Training Data Shape: " + str(self.train_data.shape))
+            print("Testing Data Shape: " + str(self.test_data.shape))
         if hasattr(self, "num_folds"):
-            print("Number of Crossvalidation Folds: " + self.num_folds)
+            print("Number of Crossvalidation Folds: " + str(self.num_folds))
 
         print("**Evaluation Information** \n")
         if self.training_complete:
             print("Model Performance: " + str(self.metrics))
-            print("Number of Training Epochs Completed: " + self.epochs)
+            print("Number of Training Epochs Completed: " + str(self.epochs))
 
     def split_data(self, split_ratio = 0.2):
         self.data_split = split_ratio
